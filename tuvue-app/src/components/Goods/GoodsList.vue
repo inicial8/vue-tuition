@@ -11,13 +11,13 @@ defineProps({
 const goodsList = ref()
 const loading = ref(true)
 const error = ref(null)
-const url = 'https://fakestoreapi.com/products'
+const url = 'https://fakestoreapi.com/'
 const method = 'get'
 
 onMounted(() => {
-  fetchData(url, method)
+  fetchData(url+'products', method)
   .then(res => goodsList.value = res)
-  .then(() => {
+  .finally(() => {
     loading.value = false
   })
 })
