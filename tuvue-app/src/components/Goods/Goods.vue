@@ -10,7 +10,14 @@ const show = ref(true);
 
 <template>
   <v-card class="mx-auto" max-width="344" elevation="0">
-    <v-img :src="goods.image" height="150px"></v-img>
+    <v-rating
+      v-model="goods.rating.rate"
+      half-increments
+      color="orange"
+      size="x-small"
+    ></v-rating>
+    <span class="text-caption">({{ goods.rating.count }})</span>
+    <v-img :src="goods.image" height="150px" :alt="goods.title"></v-img>
 
     <v-card-title>
       {{ goods.title }}
@@ -19,7 +26,9 @@ const show = ref(true);
     <v-card-subtitle> {{ goods.price }}$ </v-card-subtitle>
 
     <v-card-actions>
-      <v-btn color="green"> Add to cart </v-btn>
+      <v-btn color="green" @click="$emit('addToCart', goods)">
+        Add to cart
+      </v-btn>
 
       <v-spacer></v-spacer>
 

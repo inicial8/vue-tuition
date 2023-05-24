@@ -1,6 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, reactive } from "vue";
 import Goods from "./Goods.vue";
+import Cart from "../Cart/Cart.vue";
+import CreateOrder from "../Cart/CreateOrder.vue";
 import fetchData from "../fetchData";
 
 defineProps({
@@ -13,6 +15,12 @@ const error = ref(null);
 const search = ref("");
 const url = "https://fakestoreapi.com/";
 const method = "get";
+const choosedGoods = reactive([]);
+const initOrder = ref(false);
+
+function addToCart(item) {
+  choosedGoods.push(item);
+}
 
 onMounted(() => {
   fetchData(url + "products", method)
@@ -30,10 +38,14 @@ const searchedGoods = computed(() => {
     );
   });
 });
+
+function createOrder(args) {
+  initOrder.value = args.init;
+}
 </script>
 
 <template>
-  <v-row no-gutters>
+  <v-row no-gutters v-if="!initOrder">
     <v-col cols="8" sm="2">
       <v-sheet class="ma-2 pa-2">
         <v-card class="mx-auto" width="300" elevation="0">
@@ -63,19 +75,21 @@ const searchedGoods = computed(() => {
           <v-card-text>
             <v-row dense v-if="!loading && goodsList && goodsList.length">
               <v-col v-for="goods in searchedGoods" :key="goods.id">
-                <Goods :goods="goods" />
+                <Goods :goods="goods" @add-to-cart="addToCart" />
               </v-col>
             </v-row>
           </v-card-text>
         </v-card>
       </v-sheet>
     </v-col>
+    <v-col cols="8" sm="2">
+      <v-sheet class="ma-2 pa-2">
+        <Cart :choosedGoods="choosedGoods" @create-order="createOrder"></Cart>
+      </v-sheet>
+    </v-col>
   </v-row>
+  <CreateOrder :choosedGoods="choosedGoods"></CreateOrder>
 </template>
 
 <style scoped>
-ul {
-  list-style: none;
-  text-align: left;
-}
 </style>
