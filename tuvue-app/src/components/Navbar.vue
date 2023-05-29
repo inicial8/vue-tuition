@@ -16,7 +16,7 @@ function toggleTheme() {
         <v-spacer></v-spacer>
 
         <v-tabs centered stacked slider-color="primary" bg-color="transparent" color="basil">
-            <v-tab small :to="{ name: 'home' }" variant="text" ripple="false">
+            <v-tab small :to="{ name: 'home' }" variant="text">
                 home
             </v-tab>
             <v-tab small :to="{ name: 'goods' }">

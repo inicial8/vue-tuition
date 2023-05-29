@@ -31,12 +31,12 @@ onMounted(() => {
 });
 
 const searchedGoods = computed(() => {
-  return goodsList.value.filter((goods) => {
+    return search.value ? goodsList.value.filter((goods) => {
     return (
       goods.title.toLowerCase().indexOf(search.value.toLowerCase()) != -1 ||
       goods.price == search.value
     );
-  });
+  }) : goodsList.value  
 });
 
 function createOrder(args) {
@@ -50,13 +50,8 @@ function createOrder(args) {
       <v-sheet class="ma-2 pa-2">
         <v-card class="mx-auto" width="300" elevation="0">
           <v-card-text>
-            <v-text-field
-              label="search..."
-              prepend-icon="mdi-magnify"
-              variant="underlined"
-              v-model="search"
-              hint="search by Title or Price"
-            ></v-text-field>
+            <v-text-field label="search..." prepend-icon="mdi-magnify" variant="underlined" v-model="search"
+              hint="search by Title or Price"></v-text-field>
           </v-card-text>
         </v-card>
       </v-sheet>
@@ -91,5 +86,4 @@ function createOrder(args) {
   <CreateOrder :choosedGoods="choosedGoods"></CreateOrder>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
