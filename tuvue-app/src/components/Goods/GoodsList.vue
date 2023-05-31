@@ -70,7 +70,7 @@ function createOrder(args) {
           <v-card-text>
             <v-row dense v-if="!loading && goodsList && goodsList.length">
               <v-col v-for="goods in searchedGoods" :key="goods.id">
-                <Goods :goods="goods" @add-to-cart="addToCart" />
+                  <Goods :goods="goods" @add-to-cart="addToCart"/>
               </v-col>
             </v-row>
           </v-card-text>

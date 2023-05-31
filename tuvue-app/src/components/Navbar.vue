@@ -9,9 +9,10 @@ function toggleTheme() {
 
 <template>
     <v-app-bar scroll-behavior="elevate" scroll-threshold="8">
-        <v-avatar size="32">
-            <v-icon icon="mdi-airballoon-outline"></v-icon>
+        <v-avatar class="ml-4">
+            <v-btn icon="mdi-airballoon-outline" variant="plain"></v-btn>
         </v-avatar>
+        Shop Balloon
 
         <v-spacer></v-spacer>
 
@@ -25,7 +26,7 @@ function toggleTheme() {
         </v-tabs>
         <v-spacer></v-spacer>
 
-        <v-btn icon="mdi-weather-night" @click="toggleTheme" variant="plain"></v-btn>
+        Theme<v-btn icon="mdi-theme-light-dark" @click="toggleTheme" variant="plain"></v-btn>
     </v-app-bar>
 </template>
 

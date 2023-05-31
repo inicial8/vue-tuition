@@ -8,7 +8,7 @@ const icons = [
 </script>
 
 <template>
-    <v-footer class="bg-indigo-lighten-1 text-center d-flex flex-column" max-height="300">
+    <v-footer class="text-center d-flex flex-column" max-height="300">
         <div>
             <v-btn v-for="icon in icons" :key="icon" class="mx-4" :icon="icon" variant="text"></v-btn>
         </div>
@@ -24,7 +24,7 @@ const icons = [
         <v-divider></v-divider>
 
         <div>
-            {{ new Date().getFullYear() }} — <strong>Baloon Shop</strong>
+            {{ new Date().getFullYear() }} — <strong>Shop Balloon</strong>
         </div>
     </v-footer>
 </template>
