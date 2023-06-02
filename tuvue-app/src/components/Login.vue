@@ -1,22 +1,36 @@
 <script setup>
-import { ref } from 'vue';
 import router from '../routes';
-const login = ref();
-const password = ref();
-const user = localStorage.getItem('user')
+import { useField, useForm } from "vee-validate";
 
-function Login() {
-    if(user){
-        router.push('/')
-    }else {
-        localStorage.setItem('user', login.value);
-        router.go('/') 
+const user = localStorage.getItem('user');
+
+const { handleSubmit } = useForm({
+    validationSchema: {
+        password(value) {
+            if (value?.length >= 2) return true;
+            return "Name needs to be at least 2 characters.";
+        },
+        email(value) {
+            if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true;
+            return "Must be a valid e-mail.";
+        },
+    },
+});
+
+const email = useField("email");
+const password = useField("password");
+
+const submit = handleSubmit(() => {
+    if (user) {
+        router.push('/');
+    } else {
+        localStorage.setItem('user', email.value.value);
+        router.push({path: '/'});
     }
-}
+});
 </script>
 
 <template>
-    <v-app id="inspire">
         <v-container class="fill-height" fluid>
             <v-row justify="center">
                 <v-col cols="12" sm="8" md="10">
@@ -27,12 +41,12 @@ function Login() {
                                     <v-col cols="12" md="8">
                                         <v-card-text>
                                             <h1 class="
-                              text-center
-                              display-2
-                              mb-4
-                              light-blue--text
-                              text--darken-3
-                            ">
+                                                text-center
+                                                display-2
+                                                mb-4
+                                                light-blue--text
+                                                text--darken-3
+                                            ">
                                                 Sign in
                                             </h1>
                                             <div class="text-center">
@@ -58,18 +72,21 @@ function Login() {
                                                     <v-icon>mdi-bitbucket</v-icon>
                                                 </v-btn>
                                             </div>
-                                            <v-form class="mt-4">
-                                                <v-text-field v-model="login" label="Email" name="Email"
-                                                    prepend-icon="email" type="text" color="blue accent-3"></v-text-field>
-                                                <v-text-field v-model="password" id="password" label="Password"
+                                            <form class="mt-4" @submit.prevent="submit">
+                                                <v-text-field v-model="email.value.value" label="Email" name="Email"
+                                                    prepend-icon="email" type="text" color="blue accent-3"
+                                                    :error-messages="email.errorMessage.value"></v-text-field>
+                                                <v-text-field v-model="password.value.value" id="password" label="Password"
                                                     name="Password" prepend-icon="password" type="password"
-                                                    color="red accent-3"></v-text-field>
-                                            </v-form>
+                                                    color="red accent-3" :counter="8"
+                                                    :error-messages="password.errorMessage.value"></v-text-field>
+                                                <div class="text-center">
+                                                    <v-btn type="submit" variant="tonal" rounded="0"
+                                                        color="white--text light-blue" class="text-center mt-4 mb-6"> Sign
+                                                        in </v-btn>
+                                                </div>
+                                            </form>
                                         </v-card-text>
-                                        <div class="text-center">
-                                            <v-btn rounded="0" color="white--text light-blue" class="text-center mt-4 mb-6"
-                                                @click="Login()">Sign in</v-btn>
-                                        </div>
                                     </v-col>
                                     <v-col cols="12" md="4" class="light-blue darken-2">
                                         <v-card-text class="white--text mt-12">
@@ -86,7 +103,6 @@ function Login() {
                 </v-col>
             </v-row>
         </v-container>
-    </v-app>
-</template>
+        </template>
 
 <style scoped></style>

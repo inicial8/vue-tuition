@@ -1,19 +1,24 @@
 <script setup>
-import Navbar from './components/Navbar.vue'
-import Footer from './components/Footer.vue'
+import { useTheme } from 'vuetify'
+import { onBeforeMount } from "vue";
+import Navbar from './components/Navbar.vue';
+import Footer from './components/Footer.vue';
 
-const user = localStorage.getItem('user')
+const theme = useTheme()
+
+onBeforeMount(() =>{
+  theme.global.name.value = localStorage.getItem('theme')
+})
 </script>
 
 <template>
    <v-app id="inspire">
-    <Navbar v-if="user"></Navbar>
-
+    <Navbar />
     <v-main>
       <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
-    <Footer v-if="user"></Footer>
+    <Footer />
   </v-app>
 </template>

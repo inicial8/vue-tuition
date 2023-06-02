@@ -49,8 +49,6 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const loginpath = window.location.pathname;
 
-  console.log(currentUser)
-
   if (requiresAuth && !currentUser) {
       next({ name: 'login', query: { from: loginpath } });
   } else if (!requiresAuth && currentUser) next(loginpath);
