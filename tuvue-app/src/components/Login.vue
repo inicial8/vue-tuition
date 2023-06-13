@@ -1,6 +1,9 @@
 <script setup>
 import router from '../routes';
 import { useField, useForm } from "vee-validate";
+import { useUsersStore } from '../stores/users'
+
+const { login } = useUsersStore()
 
 const user = localStorage.getItem('user');
 
@@ -24,6 +27,7 @@ const submit = handleSubmit(() => {
     if (user) {
         router.push('/');
     } else {
+        login(email.value.value)
         localStorage.setItem('user', email.value.value);
         router.push({path: '/'});
     }

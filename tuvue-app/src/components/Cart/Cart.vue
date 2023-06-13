@@ -1,13 +1,17 @@
 <script setup>
 import { computed } from "vue";
+import { storeToRefs } from 'pinia'
+import { useCartStore } from '../../stores/cart'
 const props = defineProps({
   choosedGoods: Array,
 });
 
+const { getGoodsTotal } = storeToRefs(useCartStore())
+
 let total = computed(() => {
   let total = 0;
   props.choosedGoods.forEach((item) => {
-    total += item.price;
+    total += item.price*item.count;
   });
   return total;
 });
@@ -22,14 +26,14 @@ let total = computed(() => {
   >
     <v-toolbar color="gray">
       <v-btn variant="text" icon="mdi-cart"></v-btn>
-      <v-toolbar-title>Your Cart ({{ choosedGoods.length }})</v-toolbar-title>
+      <v-toolbar-title>Your Cart ({{ getGoodsTotal }})</v-toolbar-title>
     </v-toolbar>
 
     <v-list>
       <v-list-item
         v-for="(goods, index) in choosedGoods"
         :key="goods.id"
-        :title="goods.title"
+        :title="goods.title+' (x'+goods.count+')'"
         :subtitle="goods.price + '$'"
       >
         <template v-slot:prepend>

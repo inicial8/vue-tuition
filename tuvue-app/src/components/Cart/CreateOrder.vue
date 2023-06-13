@@ -12,7 +12,7 @@ const orderCreated = ref(false);
 let total = computed(() => {
   let total = 0;
   props.choosedGoods.forEach((item) => {
-    total += item.price;
+    total += item.price*item.count;
   });
   return total;
 });
@@ -47,7 +47,7 @@ function setOrderCreated(value) {
         <v-list-item
           v-for="(goods, index) in choosedGoods"
           :key="goods.id"
-          :title="goods.title"
+          :title="goods.title+' (x'+goods.count+')'"
           :subtitle="goods.price + '$'"
         >
           <template v-slot:prepend>
