@@ -3,31 +3,28 @@ import { ref, onMounted, computed, reactive } from "vue";
 import Goods from "./Goods.vue";
 import Cart from "../Cart/Cart.vue";
 import CreateOrder from "../Cart/CreateOrder.vue";
-import fetchData from "../fetchData";
+import { storeToRefs } from 'pinia'
+import { useGoodsStore } from '../../stores/goods'
+import { useCartStore } from '../../stores/cart'
 
 defineProps({
   msg: String,
 });
 
-const goodsList = ref();
-const loading = ref(true);
-const error = ref(null);
+const { goodsList, loading, error } = storeToRefs(useGoodsStore())
+const { goodsListInCart } = storeToRefs(useCartStore())
+const { fetchGoods } = useGoodsStore()
+const { add } = useCartStore()
+
 const search = ref("");
-const url = "https://fakestoreapi.com/";
-const method = "get";
-const choosedGoods = reactive([]);
 const initOrder = ref(false);
 
 function addToCart(item) {
-  choosedGoods.push(item);
+  add(item)
 }
 
 onMounted(() => {
-  fetchData(url + "products", method)
-    .then((res) => (goodsList.value = res))
-    .finally(() => {
-      loading.value = false;
-    });
+  fetchGoods()
 });
 
 const searchedGoods = computed(() => {
@@ -79,11 +76,11 @@ function createOrder(args) {
     </v-col>
     <v-col cols="8" sm="2">
       <v-sheet class="ma-2 pa-2">
-        <Cart :choosedGoods="choosedGoods" @create-order="createOrder"></Cart>
+        <Cart :choosedGoods="goodsListInCart" @create-order="createOrder"></Cart>
       </v-sheet>
     </v-col>
   </v-row>
-  <CreateOrder :choosedGoods="choosedGoods"></CreateOrder>
+  <CreateOrder :choosedGoods="goodsListInCart" v-if="initOrder"></CreateOrder>
 </template>
 
 <style scoped></style>

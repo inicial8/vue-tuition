@@ -1,6 +1,10 @@
 <script setup>
 import { useTheme } from 'vuetify'
-import router from '../routes';
+import router from '../routes'
+import { storeToRefs } from 'pinia'
+import { useUsersStore } from '../stores/users'
+
+const { username, loading, error } = storeToRefs(useUsersStore())
 
 const theme = useTheme()
 function toggleTheme() {
@@ -34,7 +38,7 @@ function logout() {
             </v-tab>
         </v-tabs>
         <v-spacer></v-spacer>
-        <span class="text-caption">{{ user }}</span>
+        <span class="text-caption">{{ user || username }}</span>
         <v-btn variant="plain" icon="mdi-logout" @click="logout"></v-btn>
 
         Theme<v-btn icon="mdi-theme-light-dark" @click="toggleTheme" variant="plain"></v-btn>

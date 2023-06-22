@@ -2,49 +2,34 @@
 import { ref, onMounted, computed, reactive } from "vue";
 import Cart from "../Cart/Cart.vue";
 import CreateOrder from "../Cart/CreateOrder.vue";
-import fetchData from "../fetchData";
 import { useRoute } from 'vue-router';
-
+import { storeToRefs } from 'pinia'
+import { useGoodsStore } from '../../stores/goods'
+import { useCartStore } from '../../stores/cart'
 
 defineProps({
   id: String,
 });
 
-const goodsList = ref({});
-const loading = ref(true);
-const search = ref("");
-const url = "https://fakestoreapi.com";
-const method = "get";
-const choosedGoods = reactive([]);
+const { product, loading, error } = storeToRefs(useGoodsStore())
+const { goodsListInCart } = storeToRefs(useCartStore())
+const { fetchProduct } = useGoodsStore()
+const { add } = useCartStore()
+
 const initOrder = ref(false);
 
 const route = useRoute();
-// const router = useRouter();
 
 function addToCart(item) {
-  choosedGoods.push(item);
+  add(item)
 }
 
 onMounted(() => {
-  fetchData(`${url}/products/${route.params.id}`, method)
-    .then((res) => (goodsList.value = { ...res }))
-    .finally(() => {
-      loading.value = false;
-    });
-});
-
-const searchedGoods = computed(() => {
-  return search.value ? goodsList.value.filter((goods) => {
-    return (
-      goods.title.toLowerCase().indexOf(search.value.toLowerCase()) != -1 ||
-      goods.price == search.value
-    );
-  }) : goodsList.value
+  fetchProduct(route.params.id)
 });
 
 function createOrder(args) {
-  initOrder.value = args.init;
-  // router.push('/cart/create-order')
+  initOrder.value = args.init
 }
 </script>
 
@@ -52,28 +37,23 @@ function createOrder(args) {
   <v-row no-gutters v-if="!initOrder">
     <v-col cols="8" sm="2">
       <v-sheet class="ma-2 pa-2">
-        <v-card class="mx-auto" width="300" elevation="0">
-          <v-card-text>
-            <v-text-field label="search..." prepend-icon="mdi-magnify" variant="underlined" v-model="search"
-              hint="search by Title or Price"></v-text-field>
-          </v-card-text>
-        </v-card>
+        {{ error }}
       </v-sheet>
     </v-col>
-    <v-col cols="12" sm="8">
+    <v-col cols="12" sm="7">
       <v-sheet class="ma-2 pa-2">
 
-        <v-container>
+        <v-container v-if="product">
           <v-row no-gutters>
-            <v-col cols="12" sm="4">
+            <v-col cols="10" sm="4">
               <v-sheet class="ma-2 pa-2">
-                <v-card class="mx-auto" max-width="800" elevation="0">
+                <v-card class="mx-auto" max-width="800" elevation="0" :loading="loading">
 
-                  <v-img class="align-end text-white" width="300" aspect-ratio="1/1" cover :src="goodsList.image"></v-img>
+                  <v-img class="align-end text-white" width="300" aspect-ratio="1/1" cover :src="product.image"></v-img>
                 </v-card>
               </v-sheet>
             </v-col>
-            <v-col cols="12" sm="8">
+            <v-col cols="10" sm="8">
               <v-sheet class="ma-2 pa-2">
                 <v-card class="mx-auto" max-width="800" elevation="0">
 
@@ -82,11 +62,11 @@ function createOrder(args) {
                       <v-avatar color="red-accent-4" icon="mdi-sale-outline"></v-avatar>
                     </template>
                     <template v-slot:text>
-                      <v-card-title class="text-wrap">{{ goodsList.title }}</v-card-title>
+                      <v-card-title class="text-wrap">{{ product.title }}</v-card-title>
                     </template>
 
                     <template v-slot:actions>
-                      <v-btn @click="addToCart(goodsList)">
+                      <v-btn @click="addToCart(product)">
                         Add To Cart
                       </v-btn>
 
@@ -97,9 +77,9 @@ function createOrder(args) {
                   </v-banner>
 
                   <v-card-text>
-                    <div class="pa-4"><strong>Category:</strong> <u>{{ goodsList.category }}</u></div>
+                    <div class="pa-4"><strong>Category:</strong> <u>{{ product.category }}</u></div>
 
-                    <div class="pa-4"><strong>Details:</strong> {{ goodsList.description }}</div>
+                    <div class="pa-4"><strong>Details:</strong> {{ product.description }}</div>
                   </v-card-text>
                 </v-card>
               </v-sheet>
@@ -108,13 +88,13 @@ function createOrder(args) {
         </v-container>
       </v-sheet>
     </v-col>
-    <v-col cols="8" sm="2">
+    <v-col cols="8" sm="3">
       <v-sheet class="ma-2 pa-2">
-        <Cart :choosedGoods="choosedGoods" @create-order="createOrder"></Cart>
+        <Cart :choosedGoods="goodsListInCart" @create-order="createOrder"></Cart>
       </v-sheet>
     </v-col>
   </v-row>
-  <CreateOrder :choosedGoods="choosedGoods"></CreateOrder>
+  <CreateOrder :choosedGoods="goodsListInCart" v-if="initOrder"></CreateOrder>
 </template>
 
 <style scoped></style>
